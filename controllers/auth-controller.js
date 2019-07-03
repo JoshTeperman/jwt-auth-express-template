@@ -9,11 +9,8 @@ const register = async (req, res) => {
       if (query) {
         return res.status(403).send('user already exists')
       } else if (query === null) {
-        console.log('else if');
         const newUser = await generateUser(username, password, role)
-        console.log(newUser);
         const token = await generateToken(newUser)
-        console.log(token);
         return res.send({ token }) // why an object?
       }
     } catch(err) {
@@ -33,7 +30,7 @@ const login = async (req, res) => {
       if (query === null) {
         res.status(403).send(`User doesn't exist`)
       } else {
-        const result = checkPassword(password, query.password)
+        const result = await checkPassword(password, query.password)
         if (result) {
           const token = await generateToken(query)
           return res.send({ token })
