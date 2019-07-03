@@ -14,7 +14,6 @@ const register = async (req, res) => {
         return res.send({ token }) // why an object?
       }
     } catch(err) {
-      console.log(err.stack)
       return res.status(404).send('An error occurred')
     }
   } else {
@@ -44,8 +43,6 @@ const login = async (req, res) => {
   } else {
     res.status(403).send('Invalid credentials - username & password required')
   }
-  // return cookie
-  // save cookie in local storage
 }
 
 module.exports = {
