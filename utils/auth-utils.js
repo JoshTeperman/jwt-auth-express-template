@@ -21,7 +21,12 @@ const generateUser = async (username, password, role) => {
   return await newUser.save()
 }
 
+const checkPassword = async (password, hash) => {
+  return await bcrypt.compare(password, hash)
+}
+
 module.exports = {
   generateUser,
-  generateToken
+  generateToken,
+  checkPassword
 }

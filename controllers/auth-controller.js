@@ -1,9 +1,5 @@
 const User = require('../models/User')
-const { generateToken, generateUser } = require('../utils/auth-utils')
-
-const login = (req, res) => {
-  res.send('login post endpoint')
-}
+const { generateToken, generateUser, checkPassword } = require('../utils/auth-utils')
 
 const register = async (req, res) => {
   const { username, password, role } = req.body
@@ -25,8 +21,34 @@ const register = async (req, res) => {
       return res.status(404).send('An error occurred')
     }
   } else {
-    return res.status(403).send('Incorrect credentials')
+    return res.status(403).send('Incorrect credentials - username & password required')
   }
+}
+
+const login = async (req, res) => {
+  const { username, password } = req.body
+  if (username && password ) {
+    try {
+      const query = await User.findOne({username: username})
+      if (query === null) {
+        res.status(403).send(`User doesn't exist`)
+      } else {
+        const result = checkPassword(password, query.password)
+        if (result) {
+          const token = await generateToken(query)
+          return res.send({ token })
+        } else {
+          res.status(403).send('invalid credentials')
+        }
+      }
+    } catch(err) {
+      res.status(404).send('An error occured')
+    }
+  } else {
+    res.status(403).send('Invalid credentials - username & password required')
+  }
+  // return cookie
+  // save cookie in local storage
 }
 
 module.exports = {
